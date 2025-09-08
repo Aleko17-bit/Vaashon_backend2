@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vaashon Shop</title>
+  <style>
+    /* General reset */
+    body { margin: 0; font-family: Arial, sans-serif; background: #f2f2f2; display: flex; }
+
+    /* Sidebar */
+    aside {
+      width: 220px;
+      background: #111;
+      color: #fff;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    aside h2 { font-size: 20px; margin-bottom: 15px; color: #ff8c00; }
+    aside ul { list-style: none; padding: 0; }
+    aside li { margin: 10px 0; }
+    aside a {
+      color: #fff;
+      text-decoration: none;
+      display: block;
+      padding: 8px 10px;
+      border-radius: 4px;
+      transition: 0.3s;
+    }
+    aside a:hover { background: #ff8c00; color: #000; }
+
+    /* Main area */
+    main { flex: 1; padding: 20px; }
+    header {
+      background: #111;
+      color: #ff8c00;
+      padding: 15px;
+      text-align: center;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    }
+
+    /* Products grid */
+    .products { display: flex; flex-wrap: wrap; gap: 20px; justify-content: flex-start; }
+    .product {
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px;
+      width: 200px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+    .product:hover { transform: scale(1.05); }
+    .product img { width: 100%; height: 200px; object-fit: cover; border-radius: 5px; }
+    .product h3 { margin: 10px 0 5px; font-size: 16px; color: #111; }
+    .product p { margin: 5px 0; font-size: 14px; color: #333; }
+    a.button {
+      background: #ff8c00;
+      color: #000;
+      padding: 8px 12px;
+      text-decoration: none;
+      border-radius: 4px;
+      display: inline-block;
+      margin-top: 10px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    a.button:hover { background: #e67600; color: #fff; }
+
+    /* Responsive */
+    @media(max-width:1024px) { .product { width: calc(33% - 20px); } }
+    @media(max-width:768px) { .product { width: calc(50% - 20px); } aside { display:none; } }
+    @media(max-width:480px) { .product { width: 100%; } }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside>
+    <h2>Categories</h2>
+    <ul>
+      <li><a href="{% url 'home' %}">All</a></li>
+      {% for category in categories %}
+        <li><a href="{% url 'home' %}?category={{ category.id }}">{{ category.name }}</a></li>
+      {% empty %}
+        <li>No categories available</li>
+      {% endfor %}
+    </ul>
+  </aside>
+
+  <!-- Main area -->
+  <main>
+    <header>
+      <h1>Vaashon Shop</h1>
+    </header>
+
+    <div class="products">
+      {% if products %}
+        {% for product in products %}
+          <div class="product">
+            {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+              <img src="{% static 'images/default-product.png' %}" alt="{{ product.name }}">
+            {% endif %}
+            <h3>{{ product.name }}</h3>
+            <p>Price: KES {{ product.price }}</p>
+            <a href="{% url 'add_to_cart' product.id %}" class="button">Add to Cart</a>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p style="color:#555; font-size:16px;">No products available at the moment.</p>
+      {% endif %}
+    </div>
+  </main>
+
+</body>
+</html>

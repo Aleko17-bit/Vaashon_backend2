@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cart - Vaashon Shop</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; padding:0; background:#000; color:#ffa500; }
+    header { background:#111; color:#ffa500; padding:15px 30px; text-align:center; }
+    main { max-width:1000px; margin:30px auto; background:#1a1a1a; padding:20px; border-radius:12px; box-shadow:0 6px 12px rgba(255,165,0,0.3); }
+    table { width:100%; border-collapse:collapse; margin-bottom:20px; color:#ffa500; }
+    th, td { border:1px solid #333; padding:12px; text-align:left; vertical-align:middle; }
+    th { background:#222; }
+    img { width:80px; height:auto; border-radius:6px; margin-right:8px; vertical-align:middle; }
+    a.button, button { background:#ffa500; color:#000; padding:8px 12px; text-decoration:none; border:none; border-radius:6px; cursor:pointer; font-weight:bold; transition:background 0.3s; }
+    a.button:hover, button:hover { background:#ffb84d; }
+    input.quantity-input, select.size-select { padding:4px 6px; border-radius:4px; border:1px solid #333; background:#111; color:#ffa500; }
+    .empty-cart { text-align:center; margin-top:40px; font-size:18px; }
+    @media(max-width:768px) {
+      table, thead, tbody, th, td, tr { display:block; }
+      th { text-align:right; padding-right:50%; }
+      td { text-align:right; padding-left:50%; position:relative; }
+      td::before { content: attr(data-label); position:absolute; left:12px; font-weight:bold; color:#ffa500; }
+      img { width:60px; }
+      main { padding:15px; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Vaashon Shop - Cart</h1>
+</header>
+
+<main>
+  {% if cart_items %}
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Size</th>
+          <th>Quantity</th>
+          <th>Price (KES)</th>
+          <th>Total (KES)</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart_items %}
+        <tr>
+          <td data-label="Product">
+            {% if item.product.image %}
+              <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+            {% else %}
+              <img src="{% static 'images/default-product.png' %}" alt="{{ item.product.name }}">
+            {% endif %}
+            {{ item.product.name }}
+          </td>
+
+          <td data-label="Size">
+            <form action="{% url 'update_cart_size' item.id %}" method="POST">
+              {% csrf_token %}
+              <select name="size" class="size-select" onchange="this.form.submit()">
+                {% for s in item.product.get_size_list %}
+                  <option value="{{ s }}" {% if s == item.size %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+              </select>
+            </form>
+          </td>
+
+          <td data-label="Quantity">
+            <form action="{% url 'update_cart_quantity' item.id %}" method="POST" style="display:flex;align-items:center;gap:4px;">
+              {% csrf_token %}
+              <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="quantity-input">
+              <button type="submit" class="button">Update</button>
+            </form>
+          </td>
+
+          <td data-label="Price">
+            KES {{ item.price }}
+          </td>
+
+          <td data-label="Total">
+            KES {{ item.total }}
+          </td>
+
+          <td data-label="Action">
+            <a href="{% url 'remove_from_cart' item.id %}" class="button">Remove</a>
+          </td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <th colspan="4">Grand Total</th>
+          <th colspan="2">KES {{ grand_total }}</th>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="text-align:right;">
+      <a href="{% url 'checkout' %}" class="button">Proceed to Checkout</a>
+    </div>
+
+  {% else %}
+    <div class="empty-cart">
+      <p>Your cart is empty.</p>
+      <a href="{% url 'home' %}" class="button">Continue Shopping</a>
+    </div>
+  {% endif %}
+</main>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Order History - Vaashon Shop</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0; padding:0; }
+    header { background:#222; color:orange; padding:20px; text-align:center; }
+    main { max-width:900px; margin:30px auto; background:white; padding:20px; border-radius:6px; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { border:1px solid #ddd; padding:10px; text-align:left; }
+    th { background:#222; color:orange; }
+    .status { font-weight:bold; }
+    .pending { color:red; }
+    .paid { color:blue; }
+    .delivered { color:green; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Order History</h1>
+</header>
+<main>
+  {% if orders %}
+    <table>
+      <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Total Price</th>
+        <th>Payment Method</th>
+        <th>Status</th>
+        <th>Date</th>
+      </tr>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.product.name }}</td>
+        <td>{{ order.quantity }}</td>
+        <td>KES {{ order.total_price }}</td>
+        <td>{{ order.get_payment_method_display }}</td>
+        <td class="status 
+            {% if order.status == 'Pending' %}pending
+            {% elif order.status == 'Paid' %}paid
+            {% elif order.status == 'Delivered' %}delivered{% endif %}">
+          {{ order.status }}
+        </td>
+        <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>You have no orders yet.</p>
+  {% endif %}
+</main>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!-- shop/templates/shop/register.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Vaashon Shop</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            color: #ffa500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .register-container {
+            background: #111;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(255, 165, 0, 0.6);
+            width: 380px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ffa500;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ffa500;
+            border-radius: 6px;
+            background: #000;
+            color: #ffa500;
+            margin-bottom: 15px;
+        }
+        input::placeholder {
+            color: #ffb733;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #ffa500;
+            border: none;
+            border-radius: 6px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #ff7b00;
+        }
+        .link {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .link a {
+            color: #ffa500;
+            text-decoration: none;
+        }
+        .link a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Create Your Account</h2>
+
+        {% if error %}
+            <div class="error">
+                <p>{{ error }}</p>
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Email field -->
+            <input type="email" name="email" placeholder="Enter your Email" required>
+
+            <!-- Password field -->
+            <input type="password" name="password" placeholder="Enter Password" required>
+
+            <button type="submit">Register</button>
+        </form>
+
+        <div class="link">
+            <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+        </div>
+    </div>
+</body>
+</html>

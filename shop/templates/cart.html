@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cart - Vaashon Shop</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #000; color: #ffa500; margin:0; padding:0; }
+  table { width: 90%; margin: 30px auto; border-collapse: collapse; }
+  th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ffa500; }
+  th { background: #111; }
+  button { background: #ffa500; color: #000; border:none; padding: 8px 12px; border-radius:5px; cursor:pointer; }
+  button:hover { background:#ffb84d; }
+  .total { text-align: right; font-weight: bold; margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<h2 style="text-align:center; margin-top:20px;">Your Cart</h2>
+
+{% if cart_items %}
+<table>
+  <tr>
+    <th>Product</th>
+    <th>Quantity</th>
+    <th>Price (KES)</th>
+    <th>Total (KES)</th>
+    <th>Action</th>
+  </tr>
+  {% for item in cart_items %}
+  <tr>
+    <td>{{ item.product.name }}</td>
+    <td>{{ item.quantity }}</td>
+    <td>{{ item.product.price }}</td>
+    <td>{{ item.total_price }}</td>
+    <td>
+      <form method="POST" action="{% url 'remove_from_cart' item.id %}">
+        {% csrf_token %}
+        <button type="submit">Remove</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<p class="total">Cart Total: KES {{ total }}</p>
+<a href="{% url 'checkout' %}"><button>Proceed to Checkout</button></a>
+{% else %}
+<p style="text-align:center; margin-top:20px;">Your cart is empty.</p>
+<a href="{% url 'home' %}"><button>Back to Shop</button></a>
+{% endif %}
+
+</body>
+</html>

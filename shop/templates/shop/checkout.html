@@ -1,0 +1,258 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout - Vaashon Shop</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #000;
+      color: #ffa500;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #111;
+      color: #ffa500;
+      padding: 15px 30px;
+      text-align: center;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #1a1a1a;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(255, 165, 0, 0.3);
+    }
+
+    h2, .section-title {
+      color: #ffa500;
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      color: #ffa500;
+    }
+
+    th, td {
+      border: 1px solid #333;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th { background: #222; }
+
+    img {
+      width: 80px;
+      height: auto;
+      border-radius: 6px;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    select, input[type="tel"], input[type="text"], input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0 15px;
+      border-radius: 6px;
+      border: 1px solid #555;
+      background: #111;
+      color: #ffa500;
+    }
+
+    input::placeholder { color: #aaa; }
+
+    .payment-option {
+      margin-bottom: 10px;
+      padding: 12px;
+      border: 1px solid #333;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .payment-option input { margin-right: 10px; }
+
+    button, a.button {
+      background: #ffa500;
+      color: #000;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    button:hover, a.button:hover { background: #ffb84d; }
+
+    .error { color: #ff4d4d; font-weight: bold; margin-bottom: 15px; }
+    .success { color: #4dff4d; font-weight: bold; margin-bottom: 15px; }
+
+    #stk-message { margin-top: 15px; font-weight: bold; }
+
+    #delivery-note, #support-note { 
+      color: #4dff4d; 
+      font-weight: bold; 
+      margin: 5px 0 15px; 
+      display: block; 
+    }
+
+    #support-note a { color: #ffa500; text-decoration: underline; }
+
+    @media(max-width: 768px) {
+      table, thead, tbody, th, td, tr { display: block; }
+      th { text-align: right; padding-right: 50%; }
+      td { text-align: right; padding-left: 50%; position: relative; }
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 12px;
+        font-weight: bold;
+        color: #ffa500;
+      }
+      img { width: 60px; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Vaashon Shop - Checkout</h1>
+</header>
+
+<main>
+  {% if cart_items %}
+    <h2>Your Cart</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Size</th>
+          <th>Quantity</th>
+          <th>Price (KES)</th>
+          <th>Total (KES)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart_items %}
+        <tr>
+          <td data-label="Product">
+            {% if item.product.image %}
+              <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+            {% else %}
+              <img src="{% static 'images/default-product.png' %}" alt="{{ item.product.name }}">
+            {% endif %}
+            {{ item.product.name }}
+          </td>
+          <td data-label="Size">
+            <select name="size_{{ item.id }}" disabled>
+              {% for s in item.product.get_size_list %}
+                <option value="{{ s }}" {% if s == item.size %}selected{% endif %}>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td data-label="Quantity">{{ item.quantity }}</td>
+          <td data-label="Price">{{ item.product.display_price }}</td>
+          <td data-label="Total">{{ item.total_price }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <th colspan="4">Total</th>
+          <th>{{ total }}</th>
+        </tr>
+      </tbody>
+    </table>
+
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+    {% if success %}<div class="success">{{ success }}</div>{% endif %}
+
+    <form method="post" id="checkout-form" action="{% url 'checkout' %}">
+      {% csrf_token %}
+      
+      <label for="email">Email Address:</label>
+      <input type="email" name="email" id="email" placeholder="you@example.com" required
+             value="{{ request.user.email|default:'' }}" readonly>
+      
+      <label for="phone">Phone Number:</label>
+      <input type="tel" name="phone" id="phone" placeholder="2547XXXXXXXX"
+             value="{{ request.user.profile.phone_number|default:'' }}" required>
+
+      <h2 class="section-title">Select Payment Method</h2>
+      <div class="payment-option">
+        <label>
+          <input type="radio" name="payment_method" value="COD" checked onclick="showDeliveryNote()">
+          Cash on Delivery
+        </label>
+        <p id="delivery-note">Free delivery within Nairobi CBD</p>
+      </div>
+      <div class="payment-option">
+        <label>
+          <input type="radio" name="payment_method" value="ONLINE" onclick="hideDeliveryNote()">
+          Online Payment (M-Pesa STK Push)
+        </label>
+      </div>
+
+      <button type="submit">Place Order</button>
+
+      <div id="support-note">
+        Have a problem or want to report an issue? Call or WhatsApp us at 
+        <a href="tel:0729434503">0729434503</a>
+      </div>
+    </form>
+
+    <div id="stk-message"></div>
+
+    <script>
+      function showDeliveryNote() { document.getElementById('delivery-note').style.display = 'block'; }
+      function hideDeliveryNote() { document.getElementById('delivery-note').style.display = 'none'; }
+
+      document.getElementById("checkout-form").addEventListener("submit", function(e) {
+        const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+        const stkMessage = document.getElementById("stk-message");
+
+        if (paymentMethod === "ONLINE") {
+          e.preventDefault();
+          stkMessage.innerText = "Processing your STK Push...";
+
+          const formData = new FormData(this);
+
+          fetch("{% url 'checkout' %}", {
+            method: "POST",
+            body: formData,
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.order_ids) {
+              stkMessage.innerText = "STK Push sent! Enter your PIN on your phone.";
+            } else if (data.error) {
+              stkMessage.innerText = "Error: " + data.error;
+            } else {
+              stkMessage.innerText = "Failed to create order. Try again.";
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            stkMessage.innerText = "Error creating order.";
+          });
+        }
+      });
+    </script>
+
+  {% else %}
+    <div style="text-align:center; margin-top:40px;">
+      <p>Your cart is empty.</p>
+      <a href="{% url 'home' %}" class="button">Continue Shopping</a>
+    </div>
+  {% endif %}
+</main>
+</body>
+</html>

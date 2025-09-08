@@ -1,0 +1,25 @@
+{% extends 'shop/base.html' %}
+{% block content %}
+<h2>{{ category.name }}</h2>
+<div class="products">
+  {% for product in products %}
+    <div class="product-card">
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+      {% else %}
+        <img src="{% static 'images/default-product.png' %}" alt="{{ product.name }}">
+      {% endif %}
+      <h4>{{ product.name }}</h4>
+      <p>KES {{ product.sale_price|default:product.price }}</p>
+      {% if user.is_authenticated %}
+        <form method="POST" action="{% url 'add_to_cart' product.id %}">
+          {% csrf_token %}
+          <button type="submit">Add to Cart</button>
+        </form>
+      {% else %}
+        <a href="{% url 'user_login' %}" class="button">Login to Buy</a>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

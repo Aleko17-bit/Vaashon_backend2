@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ product.name }} - Vaashon Shop</title>
+  <style>
+    body { margin:0; font-family:Arial, sans-serif; background:#000; color:#ffa500; }
+    header { background:#111; color:#ffa500; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; }
+    header h1 { margin:0; }
+    nav a { color:#ffa500; text-decoration:none; margin-left:20px; font-weight:bold; }
+    nav a:hover { color:#ffb84d; }
+    main { max-width:800px; margin:30px auto; background:#1a1a1a; padding:20px; border-radius:10px; }
+    .product-image { position:relative; }
+    .product-image img { width:100%; border-radius:10px; object-fit:cover; }
+    .discount-label { position:absolute; top:10px; left:10px; background:#ff4d4d; color:#fff; padding:5px 10px; font-weight:bold; border-radius:5px; }
+    .price { font-size:20px; margin:10px 0; }
+    .original-price { text-decoration:line-through; margin-right:10px; }
+    .button, button { background:#ffa500; color:#000; border:none; padding:10px 15px; border-radius:6px; font-weight:bold; cursor:pointer; text-decoration:none; display:inline-block; margin-top:10px; }
+    .button:hover, button:hover { background:#ffb84d; }
+    .stock { margin:10px 0; font-weight:bold; }
+    .reviews { margin-top:30px; }
+    .review { border-top:1px solid #333; padding:10px 0; }
+    .review strong { color:#fff; }
+    .review-form { margin-top:20px; }
+    .review-form textarea { width:100%; padding:10px; border-radius:6px; border:none; margin-bottom:10px; }
+    .review-form select { padding:5px; border-radius:6px; border:none; margin-bottom:10px; }
+    label { display:block; margin-top:10px; }
+    select { padding:6px; border-radius:6px; border:1px solid #333; background:#111; color:#ffa500; margin-bottom:10px; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Vaashon Shop</h1>
+  <nav>
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'cart' %}">Cart</a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'logout' %}">Logout</a>
+    {% else %}
+      <a href="{% url 'login' %}">Login</a>
+      <a href="{% url 'register' %}">Register</a>
+    {% endif %}
+  </nav>
+</header>
+
+<main>
+  <div class="product-image">
+    {% if product.discount_percent > 0 %}
+      <div class="discount-label">-{{ product.discount_percent }}%</div>
+    {% endif %}
+    {% if product.image %}
+      <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    {% else %}
+      <img src="{% static 'images/default-product.png' %}" alt="{{ product.name }}">
+    {% endif %}
+  </div>
+
+  <h2>{{ product.name }}</h2>
+
+  <p class="price">
+    {% if product.sale_price %}
+      <span class="original-price">KES {{ product.price }}</span>
+      KES {{ product.sale_price }}
+    {% else %}
+      KES {{ product.price }}
+    {% endif %}
+  </p>
+
+  <p>{{ product.description }}</p>
+
+  <p class="stock">
+    {% if in_stock %}In Stock{% else %}Out of Stock{% endif %}
+  </p>
+
+  {% if in_stock %}
+    {% if user.is_authenticated %}
+      <form method="POST" action="{% url 'add_to_cart' product.id %}">
+        {% csrf_token %}
+        <!-- Dynamic Size selection -->
+        {% if product.available_sizes %}
+          <label for="size">Select Size:</label>
+          <select name="size" id="size" required>
+            <option value="">--Choose Size--</option>
+            {% for s in product.get_size_list %}
+              <option value="{{ s }}">{{ s }}</option>
+            {% endfor %}
+          </select>
+        {% endif %}
+        <button type="submit">Add to Cart</button>
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}" class="button">Login to Buy</a>
+    {% endif %}
+  {% endif %}
+
+  <a href="{% url 'home' %}" class="button" style="background:#555;">Back to Shop</a>
+
+  <!-- Reviews Section -->
+  <div class="reviews">
+    <h3>Reviews</h3>
+    {% if reviews %}
+      {% for review in reviews %}
+        <div class="review">
+          <strong>{{ review.user.username }}</strong> - Rating: {{ review.rating }}/5
+          <p>{{ review.comment }}</p>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>No reviews yet. Be the first to review!</p>
+    {% endif %}
+  </div>
+
+  <!-- Review Form -->
+  {% if user.is_authenticated %}
+    <div class="review-form">
+      <h4>Leave a Review</h4>
+      <form method="POST" action="{% url 'product_detail' product.id %}">
+        {% csrf_token %}
+        <label for="rating">Rating:</label>
+        <select name="rating" id="rating" required>
+          <option value="5">5 - Excellent</option>
+          <option value="4">4 - Good</option>
+          <option value="3">3 - Average</option>
+          <option value="2">2 - Poor</option>
+          <option value="1">1 - Terrible</option>
+        </select>
+        <textarea name="review_comment" rows="4" placeholder="Write your review here..." required></textarea>
+        <button type="submit">Submit Review</button>
+      </form>
+    </div>
+  {% else %}
+    <p><a href="{% url 'login' %}" class="button">Login to leave a review</a></p>
+  {% endif %}
+</main>
+</body>
+</html>

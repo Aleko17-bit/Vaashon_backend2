@@ -1,0 +1,28 @@
+<!-- shop/templates/shop/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Vaashon Shop</title>
+</head>
+<body>
+    <h1>Login</h1>
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li style="color:red">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <label>Email:</label>
+        <input type="email" name="email" placeholder="Enter your Email" required><br>
+        
+        <label>Password:</label>
+        <input type="password" name="password" placeholder="Enter your Password" required><br>
+        
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>

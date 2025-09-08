@@ -1,0 +1,119 @@
+ /* General Page Styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #111;
+  color: #fff;
+}
+
+/* Top Bar */
+.top-bar {
+  background: #000;
+  color: #ff3300;
+  padding: 8px;
+  text-align: right;
+  font-size: 14px;
+}
+.top-bar a {
+  color: #ff3300;
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+/* Header */
+header {
+  background: #111;
+  padding: 15px;
+  text-align: center;
+}
+header h1 {
+  color: #ff3300;
+  margin: 0;
+}
+
+/* Navigation Menu */
+nav {
+  background: #ff3300;
+  padding: 10px;
+  text-align: center;
+}
+nav a {
+  color: white;
+  margin: 0 15px;
+  text-decoration: none;
+  font-weight: bold;
+}
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* Layout */
+main {
+  display: flex;
+  margin: 20px;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  padding: 10px;
+  background: #1a1a1a;
+}
+.sidebar h2 {
+  color: #ff3300;
+}
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+.sidebar ul li {
+  margin: 8px 0;
+}
+.sidebar ul li a {
+  color: #ff3300;
+  text-decoration: none;
+}
+
+/* Products Section */
+.products {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  flex: 1;
+  justify-content: flex-start;
+  margin-left: 20px;
+}
+.card {
+  background: #1a1a1a;
+  padding: 15px;
+  border-radius: 8px;
+  width: 220px;
+  text-align: center;
+}
+.card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+.card h3 {
+  margin: 10px 0;
+  color: #fff;
+}
+.card p {
+  color: #ffcc00;
+  font-weight: bold;
+}
+.card button {
+  background: #ff6600;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+.card button:hover {
+  background: #e65c00;
+}
+

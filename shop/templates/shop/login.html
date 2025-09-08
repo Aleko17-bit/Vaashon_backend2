@@ -1,0 +1,139 @@
+<!-- shop/templates/shop/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Vaashon Shop</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #000;
+            color: #ffa500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background: #111;
+            padding: 40px;
+            border-radius: 14px;
+            box-shadow: 0 0 25px rgba(255, 165, 0, 0.6);
+            width: 380px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: #ffa500;
+            font-size: 26px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border: 1px solid #ffa500;
+            border-radius: 6px;
+            background: #000;
+            color: #ffa500;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        input:focus {
+            border: 1px solid #ff7b00;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: #ffb733;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: #ffa500;
+            color: #000;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #ff7b00;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .link {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .link a {
+            color: #ffa500;
+            text-decoration: none;
+        }
+
+        .link a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login to Vaashon</h1>
+
+        {% if error %}
+            <div class="error">
+                <p>{{ error }}</p>
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <!-- Correct: email + password -->
+            <input type="email" name="email" placeholder="Enter your Email" required>
+            <input type="password" name="password" placeholder="Enter your Password" required>
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="link">
+            <p>Don’t have an account? <a href="{% url 'register' %}">Register</a></p>
+        </div>
+
+        <div class="footer">
+            &copy; 2025 Vaashon Shop
+        </div>
+    </div>
+</body>
+</html>
