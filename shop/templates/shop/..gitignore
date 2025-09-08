@@ -3,25 +3,20 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
-*.pyc
+*.sqlite3
 
-# Django
-db.sqlite3
-*.log
-
-# Environment
-.env
-
-# Virtualenv
+# Virtual environment
 venv/
 env/
-.venv/
-.env/
-ENV/
 
-# VSCode
+# Django stuff
+*.log
+*.pot
+*.pyc
+db.sqlite3
+media/
+
+# VSCode / IDE
 .vscode/
-
-# Mac / Windows
-.DS_Store
-Thumbs.db
+.idea/
+*.swp
